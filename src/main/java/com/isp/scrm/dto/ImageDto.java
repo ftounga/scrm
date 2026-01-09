@@ -1,53 +1,30 @@
 package com.isp.scrm.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Pattern;
 
 public class ImageDto {
 
     @NotBlank
-    private String filename;
+    private String image;
 
     @NotBlank
-    private String contentType;
+    @Pattern(regexp = "P|A|D", message = "tag must be P, A or D")
+    private String tag;
 
-    @NotNull
-    @Positive
-    private Long size;
-
-    @NotBlank
-    private String base64Content;
-
-    public String getFilename() {
-        return filename;
+    public String getImage() {
+        return image;
     }
 
-    public void setFilename(String filename) {
-        this.filename = filename;
+    public void setImage(String image) {
+        this.image = image;
     }
 
-    public String getContentType() {
-        return contentType;
+    public String getTag() {
+        return tag;
     }
 
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
-
-    public Long getSize() {
-        return size;
-    }
-
-    public void setSize(Long size) {
-        this.size = size;
-    }
-
-    public String getBase64Content() {
-        return base64Content;
-    }
-
-    public void setBase64Content(String base64Content) {
-        this.base64Content = base64Content;
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 }

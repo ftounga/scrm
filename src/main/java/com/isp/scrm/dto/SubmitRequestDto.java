@@ -2,6 +2,7 @@ package com.isp.scrm.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
@@ -15,13 +16,11 @@ public class SubmitRequestDto {
     private String codeCia;
 
     @NotNull
-    private Boolean raci;
+    private Boolean raci = false;
 
-    @NotNull
+    @NotEmpty
     @Valid
     private List<ImageDto> images;
-
-    // getters / setters
 
     public String getCodeIsp() {
         return codeIsp;
