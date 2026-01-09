@@ -1,9 +1,11 @@
 package com.isp.scrm.service;
 
 import com.isp.scrm.dto.SubmitRequestDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+@Slf4j
 @Service
 public class CdiService {
 
@@ -14,11 +16,16 @@ public class CdiService {
     }
 
     public Object forward(SubmitRequestDto request) {
-        return restClient
+
+        log.info("Forwarding submit request to external API [codeIsp={}]", request.getCodeIsp());
+
+        Object response = restClient
                 .post()
                 .uri("/submit")
                 .body(request)
                 .retrieve()
                 .body(Object.class);
+        log.info("Payload ready, external call NOT YET IMPLEMENTED");
+        return response;
     }
 }
