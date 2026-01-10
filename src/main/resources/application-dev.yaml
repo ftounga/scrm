@@ -1,0 +1,20 @@
+server:
+  port: 8080
+
+security:
+  jwt:
+    secret: dev-secret-key-which-is-long-enough-32bytes-min
+    expiration: 3600000
+
+logging:
+  level:
+    root: INFO
+    com.isp.scrm: DEBUG
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when_authorized

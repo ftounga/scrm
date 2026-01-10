@@ -1,16 +1,18 @@
 package com.isp.scrm.service;
 
 import com.isp.scrm.dto.SubmitRequestDto;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Slf4j
 @Service
 public class CdiService {
+
+    private static final Logger log = LoggerFactory.getLogger(CdiService.class);
 
     private final RestClient restClient;
 
