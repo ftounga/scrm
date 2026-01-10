@@ -1,6 +1,7 @@
 package com.isp.scrm.security;
 
-import com.isp.scrm.component.JwtAuthenticationFilter;
+import com.isp.scrm.component.TechnicalJwtFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,19 +10,21 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final TechnicalJwtFilter jwtFilter;
+
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http, TechnicalJwtFilter jwtFilter) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/actuator/health").permitAll()
+                        .requestMatchers("/internal/token/rotate").permitAll() // protégé par header
+                        .requestMatchers("/actuator/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .httpBasic(basic -> basic.disable());
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

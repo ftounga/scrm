@@ -2,6 +2,8 @@ server:
   port: 8080
 
 security:
+  rotate:
+    key: dev-rotate-secret
   jwt:
     secret: dev-secret-key-which-is-long-enough-32bytes-min
     expiration: 3600000

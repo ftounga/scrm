@@ -1,53 +1,59 @@
 package com.isp.scrm.service;
 
+import com.isp.scrm.config.JwtProperties;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
 
-    private final SecretKey key;
-    private final long expiration;
+    private final JwtProperties props;
 
-    public JwtService(
-            @Value("${security.jwt.secret}") String secret,
-            @Value("${security.jwt.expiration}") long expiration
-    ) {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes());
-        this.expiration = expiration;
+    private SecretKey key() {
+        return Keys.hmacShaKeyFor(props.getSecret().getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateToken(String username) {
+    public String generateTechnicalToken() {
+        Instant now = Instant.now();
         return Jwts.builder()
-                .subject(username)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(key)
+                .subject(props.getSubject())
+                .issuer(props.getIssuer())
+                .claim("type", props.getType())
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(now.plus(props.getExpirationDays(), ChronoUnit.DAYS)))
+                .signWith(key())   // plus besoin de SignatureAlgorithm
                 .compact();
     }
 
-    public String extractUsername(String token) {
-        return parse(token).getPayload().getSubject();
-    }
-
-    public boolean isTokenValid(String token) {
-        try {
-            parse(token);
-            return true;
-        } catch (JwtException e) {
-            return false;
-        }
-    }
-
-    private Jws<Claims> parse(String token) {
-        return Jwts.parser()
-                .verifyWith(key)   // ✅ maintenant OK (SecretKey)
+    public Jws<Claims> validate(String token) {
+        Jws<Claims> jws = Jwts.parser()
+                .verifyWith(key())
                 .build()
                 .parseSignedClaims(token);
+
+        Claims claims = jws.getPayload();
+
+        if (!props.getIssuer().equals(claims.getIssuer())) {
+            throw new JwtException("Invalid issuer");
+        }
+        if (!props.getSubject().equals(claims.getSubject())) {
+            throw new JwtException("Invalid subject");
+        }
+
+        String type = claims.get("type", String.class);
+        if (!props.getType().equals(type)) {
+            throw new JwtException("Invalid token type");
+        }
+
+        return jws;
     }
 }

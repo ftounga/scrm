@@ -4,3 +4,10 @@ spring:
   profiles:
     active: dev
 
+security:
+  jwt:
+    secret: "CHANGE_ME_LATER"
+    issuer: "scrm-api"
+    subject: "scrm-technical-client"
+    type: "TECH"
+    expiration-days: 90
