@@ -6,11 +6,11 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Map;
 
@@ -27,8 +27,8 @@ public class TokenAdminController {
 
     @PostMapping("/rotate")
     public Map<String, String> rotate(@RequestHeader("X-ROTATE-KEY") String rotateKey) {
-        if (!rotateProps.getKey().equals(rotateKey)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Invalid rotate key");
+        if (rotateKey == null || !rotateProps.getKey().equals(rotateKey)) {
+            throw new AccessDeniedException("Invalid rotate key");
         }
         log.info("Rotate key received: x-rotate-key={}", rotateKey);
         String token = jwtService.generateTechnicalToken();

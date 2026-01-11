@@ -11,3 +11,19 @@ security:
     subject: "scrm-technical-client"
     type: "TECH"
     expiration-days: 90
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
