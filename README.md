@@ -1,2 +1,2 @@
 # scrm
-Introduction
+Introduction au projet scrm
